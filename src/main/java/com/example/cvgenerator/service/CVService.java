@@ -8,33 +8,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class CVService {
 
     private final CVRepository cvRepository;
     private final UserService userService;
-    private final String UPLOAD_DIR = "uploads/photos/";
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public CVService(CVRepository cvRepository, UserService userService) {
+    public CVService(CVRepository cvRepository, UserService userService, CloudinaryService cloudinaryService) {
         this.cvRepository = cvRepository;
         this.userService = userService;
-
-        try {
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-        } catch (IOException e) {
-            System.err.println("Не вдалося створити директорію для завантажень: " + e.getMessage());
-        }
+        this.cloudinaryService = cloudinaryService;
     }
 
     public CV createCV(CV cv, MultipartFile photoFile) throws IOException {
@@ -42,12 +30,10 @@ public class CVService {
         User currentUser = userService.getCurrentUser();
         cv.setUser(currentUser);
 
-        // Обробка завантаження фото
+        // Обробка завантаження фото через Cloudinary
         if (photoFile != null && !photoFile.isEmpty()) {
-            String fileName = UUID.randomUUID().toString() + "_" + photoFile.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR + fileName);
-            Files.write(filePath, photoFile.getBytes());
-            cv.setPhotoPath(fileName);
+            String photoUrl = cloudinaryService.uploadFile(photoFile);
+            cv.setPhotoPath(photoUrl);
         }
 
         // Ініціалізуємо колекції, якщо вони null
@@ -112,18 +98,17 @@ public class CVService {
             existingCV.setTemplate(cv.getTemplate());
         }
 
-        // Обробка нового фото
+        // Обробка нового фото через Cloudinary
         if (photoFile != null && !photoFile.isEmpty()) {
-            // Видалення старого фото, якщо воно існує
+            // Видалення старого фото з Cloudinary, якщо воно існує
             if (existingCV.getPhotoPath() != null && !existingCV.getPhotoPath().isEmpty()) {
-                Path oldPath = Paths.get(UPLOAD_DIR + existingCV.getPhotoPath());
-                Files.deleteIfExists(oldPath);
+                String publicId = cloudinaryService.extractPublicIdFromUrl(existingCV.getPhotoPath());
+                cloudinaryService.deleteFile(publicId);
             }
 
-            String fileName = UUID.randomUUID().toString() + "_" + photoFile.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR + fileName);
-            Files.write(filePath, photoFile.getBytes());
-            existingCV.setPhotoPath(fileName);
+            // Завантаження нового фото
+            String newPhotoUrl = cloudinaryService.uploadFile(photoFile);
+            existingCV.setPhotoPath(newPhotoUrl);
         }
 
         cvRepository.save(existingCV);
@@ -139,13 +124,10 @@ public class CVService {
             throw new RuntimeException("У вас немає прав для видалення цього CV");
         }
 
+        // Видалення фото з Cloudinary, якщо воно існує
         if (cv.getPhotoPath() != null && !cv.getPhotoPath().isEmpty()) {
-            try {
-                Path photoPath = Paths.get(UPLOAD_DIR + cv.getPhotoPath());
-                Files.deleteIfExists(photoPath);
-            } catch (IOException e) {
-                System.err.println("Не вдалося видалити фото: " + e.getMessage());
-            }
+            String publicId = cloudinaryService.extractPublicIdFromUrl(cv.getPhotoPath());
+            cloudinaryService.deleteFile(publicId);
         }
 
         cvRepository.delete(cv);

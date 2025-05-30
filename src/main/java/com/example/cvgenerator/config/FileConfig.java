@@ -9,13 +9,8 @@ public class FileConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
-        registry.addResourceHandler("/uploads/photos/**")
-                .addResourceLocations("file:uploads/photos/");
-
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:src/main/resources/images/");
-
+        // Видаляємо налаштування для локальних uploads, оскільки використовуємо Cloudinary
+        // Залишаємо тільки статичні ресурси
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/images/");
     }
