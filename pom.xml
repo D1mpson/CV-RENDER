@@ -59,7 +59,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- PostgreSQL драйвер замість MySQL -->
+        <!-- PostgreSQL драйвер для Supabase -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
-            <version>1.39.0</version>
+            <version>1.34.0</version>
         </dependency>
 
         <!-- Lombok для зменшення шаблонного коду -->
