@@ -49,13 +49,31 @@ public class UserController {
 
         try {
             userService.saveUser(user);
-            redirectAttrs.addFlashAttribute("success", "Реєстрація пройшла успішно");
+            redirectAttrs.addFlashAttribute("success",
+                    "Реєстрація успішна! Перевірте свою електронну пошту для підтвердження.");
         } catch (RuntimeException e) {
             result.rejectValue("email", "error.user", e.getMessage());
             return "register";
         }
 
-        return "redirect:/login?success";
+        return "redirect:/login?registered";
+    }
+
+    // Верифікація email
+    @GetMapping("/verify-email")
+    public String verifyEmail(@RequestParam("token") String token,
+                              RedirectAttributes redirectAttrs) {
+        boolean verified = userService.verifyEmail(token);
+
+        if (verified) {
+            redirectAttrs.addFlashAttribute("success",
+                    "Email успішно підтверджено! Тепер ви можете увійти в систему.");
+            return "redirect:/login?verified";
+        } else {
+            redirectAttrs.addFlashAttribute("error",
+                    "Посилання для підтвердження недійсне або прострочене.");
+            return "redirect:/login?verification-failed";
+        }
     }
 
     // Відображення профілю

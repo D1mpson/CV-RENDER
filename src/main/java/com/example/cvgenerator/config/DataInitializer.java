@@ -75,6 +75,9 @@ public class DataInitializer {
             admin.setBirthDate(LocalDate.now().minusYears(18));
             admin.setCityLife("City");
             admin.setRole("ROLE_ADMIN");
+            // Адмін автоматично верифікований
+            admin.setEmailVerified(true);
+
             userService.saveUser(admin);
             System.out.println("Створено адміністратора (email: admin@system.com, пароль: admin123)");
         }

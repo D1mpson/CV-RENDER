@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,8 @@ public class User {
     private String password;
 
     @NotBlank(message = "Номер телефону є обовʼязковим")
-    @Pattern(regexp = "(\\+380[0-9]{9}|0[0-9]{9})", message = "Некоректний формат номеру телефону")    private String phoneNumber;
+    @Pattern(regexp = "(\\+380[0-9]{9}|0[0-9]{9})", message = "Некоректний формат номеру телефону")
+    private String phoneNumber;
 
     @NotNull(message = "Дата народження є обовʼязковою")
     @Past(message = "Дата народження повинна бути в минулому")
@@ -51,4 +53,22 @@ public class User {
     private List<CV> cvList = new ArrayList<>();
 
     private String role = "ROLE_USER";
+
+    // Email верифікація
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
+
+    @Column(name = "verification_token")
+    private String verificationToken;
+
+    @Column(name = "verification_token_expires")
+    private LocalDateTime verificationTokenExpires;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

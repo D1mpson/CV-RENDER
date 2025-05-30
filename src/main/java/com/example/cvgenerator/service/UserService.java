@@ -13,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,13 +25,15 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
-
+    private final EmailService emailService;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JdbcTemplate jdbcTemplate, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jdbcTemplate = jdbcTemplate;
+        this.emailService = emailService;
     }
 
     public Optional<User> findByEmailWithJdbc(String email) {
@@ -47,6 +51,7 @@ public class UserService implements UserDetailsService {
                 u.setBirthDate(rs.getObject("birth_date", LocalDate.class));
                 u.setCityLife(rs.getString("city_life"));
                 u.setRole(rs.getString("role"));
+                u.setEmailVerified(rs.getBoolean("email_verified"));
                 return u;
             });
             return Optional.ofNullable(user);
@@ -62,13 +67,43 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Користувач з таким email вже існує");
         }
 
+        // Для нових користувачів створюємо verification token
+        if (user.getId() == null) {
+            user.setVerificationToken(UUID.randomUUID().toString());
+            user.setVerificationTokenExpires(LocalDateTime.now().plusHours(24));
+            user.setEmailVerified(false);
+        }
+
         // Шифрування пароля, якщо він ще не зашифрований і не пустий
         if (user.getPassword() != null && !user.getPassword().isEmpty()
                 && !user.getPassword().startsWith("$2a$")) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Відправляємо email тільки для нових користувачів
+        if (savedUser.getVerificationToken() != null && !savedUser.isEmailVerified()) {
+            emailService.sendVerificationEmail(savedUser);
+        }
+    }
+
+    public boolean verifyEmail(String token) {
+        Optional<User> userOpt = userRepository.findByVerificationToken(token);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            // Перевіряємо чи не протерміновано токен
+            if (user.getVerificationTokenExpires().isAfter(LocalDateTime.now())) {
+                user.setEmailVerified(true);
+                user.setVerificationToken(null);
+                user.setVerificationTokenExpires(null);
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updatePassword(User user, String newPassword) {
@@ -105,10 +140,15 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Користувача з email " + email + " не знайдено"));
 
+        // Перевіряємо чи верифіковано email
+        if (!user.isEmailVerified()) {
+            throw new UsernameNotFoundException("Email не підтверджено. Перевірте свою пошту.");
+        }
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole().replace("ROLE_", ""))  // Видаляємо ROLE_
+                .roles(user.getRole().replace("ROLE_", ""))
                 .build();
     }
 
@@ -122,12 +162,9 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-
     public List<User> findByRole(String role) {
         return userRepository.findAll().stream()
                 .filter(user -> role.equals(user.getRole()))
                 .collect(Collectors.toList());
     }
-
-
 }
