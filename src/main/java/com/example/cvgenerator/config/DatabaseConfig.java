@@ -33,12 +33,14 @@ public class DatabaseConfig {
 
             String host = uri.getHost();
             int port = uri.getPort();
-            String database = uri.getPath().substring(1); // видаляємо перший "/"
+            String database = uri.getPath().substring(1);
             String[] userInfo = uri.getUserInfo().split(":");
             String username = userInfo[0];
             String password = userInfo.length > 1 ? userInfo[1] : "";
 
-            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", host, port, database);
+            // Додаємо SSL та відключаємо prepared statements для Supabase pooler
+            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=require&prepareThreshold=0&cachePrepStmts=false",
+                    host, port, database);
 
             System.out.println("🔗 Host: " + host);
             System.out.println("🔗 Port: " + port);
@@ -47,7 +49,6 @@ public class DatabaseConfig {
             System.out.println("🔒 Password length: " + password.length());
             System.out.println("🔗 JDBC URL: " + jdbcUrl);
 
-            // Тест з'єднання
             DataSource ds = DataSourceBuilder.create()
                     .url(jdbcUrl)
                     .username(username)
@@ -55,7 +56,7 @@ public class DatabaseConfig {
                     .driverClassName("org.postgresql.Driver")
                     .build();
 
-            System.out.println("✅ DataSource створено успішно");
+            System.out.println("✅ DataSource створено успішно з відключеними prepared statements");
             return ds;
 
         } catch (Exception e) {
@@ -63,7 +64,7 @@ public class DatabaseConfig {
             e.printStackTrace();
             // Fallback для локальної розробки
             return DataSourceBuilder.create()
-                    .url("jdbc:postgresql://localhost:5432/cv")
+                    .url("jdbc:postgresql://localhost:5432/cv?prepareThreshold=0")
                     .username("postgres")
                     .password("dimpsonteam2256")
                     .driverClassName("org.postgresql.Driver")
