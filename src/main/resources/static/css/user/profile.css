@@ -1,0 +1,308 @@
+/* profile.css */
+@import '../other-page/variables.css';
+
+.main-content {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--container-padding);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Контейнер профілю */
+.profile-container {
+    display: flex;
+    gap: var(--section-gap);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ліва колонка - Інформація про користувача */
+.user-info {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.user-info-header {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 20px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    box-sizing: border-box;
+}
+
+.user-info-header h2 {
+    font-size: 20px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.user-info-content {
+    padding: var(--container-padding);
+    box-sizing: border-box;
+}
+
+.user-info-content h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    word-break: break-word;
+}
+
+.detail-item {
+    margin-bottom: 15px;
+    font-size: 16px;
+    word-break: break-word;
+}
+
+.user-actions {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.user-actions .btn,
+.cv-buttons .btn {
+    display: block;
+    padding: 12px;
+    text-align: center;
+    border-radius: var(--border-radius-rounded);
+    text-decoration: none;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edit-profile-btn {
+    background-color: var(--grey-color);
+    color: var(--text-color);
+}
+
+.edit-profile-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.logout-btn {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+
+.logout-btn:hover {
+    background-color: #333;
+}
+
+/* Права колонка - Резюме користувача */
+.cv-container {
+    flex: 2;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.cv-header {
+    display: flex;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    box-sizing: border-box;
+}
+
+.cv-title {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.cv-title h2 {
+    font-size: 20px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.cv-actions {
+    display: flex;
+    gap: 10px;
+    padding: 12px 20px;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.create-cv-btn {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 10px 15px;
+    width: auto;
+}
+
+.create-cv-btn:hover {
+    background-color: #333;
+}
+
+.view-all-btn {
+    background-color: var(--grey-color);
+    color: var(--text-color);
+    padding: 10px 15px;
+    width: auto;
+}
+
+.view-all-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.cv-list {
+    padding: var(--container-padding);
+    box-sizing: border-box;
+}
+
+.cv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--section-gap);
+    box-sizing: border-box;
+}
+
+.cv-card {
+    background-color: var(--secondary-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.cv-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    word-break: break-word;
+}
+
+.cv-info {
+    margin-bottom: 7px;
+    flex-grow: 1;
+    word-break: break-word;
+}
+
+.cv-info-item {
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.cv-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.view-btn, .edit-btn {
+    background-color: var(--grey-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius-rounded);
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.view-btn:hover, .edit-btn:hover {
+    background-color: #d0d0d0;
+}
+
+/* Повідомлення про відсутність CV */
+.no-cv {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.no-cv p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: var(--secondary-text);
+}
+
+.no-cv .btn {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    max-width: 200px;
+    margin: 0 auto;
+}
+.help-create-cv {
+    padding: 5px 30px;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    text-align: center;
+    border: solid;
+    border-color: #e0e0e0;
+    margin: 20px;
+    margin-inline: auto;
+}
+/* Медіа запити для адаптивності */
+@media (max-width: 992px) {
+    .profile-container {
+        flex-direction: column;
+    }
+
+    .cv-container, .user-info {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .cv-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cv-header {
+        flex-direction: column;
+    }
+
+    .cv-actions {
+        padding: 0 20px 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cv-actions a {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .user-info-content h3 {
+        font-size: 20px;
+    }
+
+    .cv-name {
+        font-size: 16px;
+    }
+
+    .user-actions .btn,
+    .cv-buttons .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .cv-title h2,
+    .user-info-header h2 {
+        font-size: 18px;
+    }
+
+    .detail-item {
+        font-size: 14px;
+    }
+}

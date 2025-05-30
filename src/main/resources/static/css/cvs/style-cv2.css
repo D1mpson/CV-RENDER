@@ -1,0 +1,444 @@
+/* Основні стилі */
+body {
+    background-color: #f5f0eb;
+    color: #333333;
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body[data-font="Arial"] { font-family: 'Arial', sans-serif; }
+body[data-font="Times New Roman"] { font-family: 'Times New Roman', serif; }
+body[data-font="Calibri"] { font-family: 'Calibri', sans-serif; }
+body[data-font="Verdana"] { font-family: 'Verdana', sans-serif; }
+body[data-font="Roboto"] { font-family: 'Roboto', sans-serif; }
+
+/* Уніфіковані стилі кнопок */
+.actions {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.btn-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Перевизначення всіх стилів кнопок для повної уніфікації */
+.btn {
+    padding: 10px 20px !important;
+    border-radius: 8px !important; /* Заокруглені прямокутники */
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    border: none !important;
+    text-transform: none !important; /* Скидаємо можливе перетворення тексту */
+    letter-spacing: normal !important; /* Скидаємо можливий letter-spacing */
+    box-shadow: none !important; /* Скидаємо можливі тіні */
+    font-family: Arial, sans-serif !important; /* Уніфікуємо шрифт для кнопок */
+}
+
+.btn:hover {
+    transform: none !important; /* Скидаємо можливу трансформацію при наведенні */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; /* Однаковий ефект тіні при наведенні */
+}
+
+/* Оверрайд стилів для створення однакових кнопок на всіх шаблонах */
+.btn-primary {
+    background-color: #edff00 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+.btn-primary:hover {
+    background-color: #ffd700 !important;
+    font-weight: bold !important;
+}
+
+.btn-success {
+    background-color: #00b0ff !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+.btn-success:hover {
+    background-color: #008ccc !important;
+    font-weight: bold !important;
+}
+
+.btn-info {
+    background-color: #4caf50 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+.btn-info:hover {
+    background-color: #429544 !important;
+    font-weight: bold !important;
+}
+
+.btn-secondary {
+    background-color: #fb0000 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+.btn-secondary:hover {
+    background-color: #DC0000 !important;
+    font-weight: bold !important;
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+/* Контейнери */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.cv-container {
+    display: flex;
+    gap: 40px;
+    background-color: #ffffff;
+    color: #333333;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Лівий сайдбар */
+.cv-sidebar {
+    width: 320px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    padding: 40px 30px;
+    color: #ffffff;
+}
+
+/* Фото секція */
+.photo-section {
+    margin-bottom: 30px;
+}
+
+.photo-container,
+.photo-placeholder {
+    width: 100%;
+    height: auto;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #6c757d;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Шапка з ім'ям */
+.header-section {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.name {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #333333;
+    position: relative;
+}
+
+.name::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #ff6b6b;
+    margin: 15px auto;
+    border-radius: 2px;
+}
+
+.surname {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Загальні стилі для заголовків секцій */
+.section-heading {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.main-section-heading {
+    color: #ff6b6b;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    margin-top: 0;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.main-section-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #ff8e53;
+    border-radius: 2px;
+}
+
+/* Контактна інформація */
+.contact-section {
+    margin-bottom: 30px;
+}
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.contact-item:hover {
+    transform: translateX(5px);
+}
+
+.contact-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-icon i {
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.contact-text {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.contact-text a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Скіли */
+.skills-section,
+.education-section,
+.languages-section,
+.courses-section,
+.hobbies-section {
+    margin-bottom: 30px;
+}
+
+.skill-item,
+.education-item {
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+}
+
+.skill-item:hover,
+.education-item:hover {
+    transform: translateX(5px);
+}
+
+.skill-name,
+.degree-title {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Правий основний блок */
+.cv-main {
+    flex: 1;
+    padding: 40px;
+}
+
+/* Текстові секції */
+.about-section,
+.experience-section,
+.portfolio-section {
+    margin-bottom: 40px;
+}
+
+.about-text {
+    line-height: 1.8;
+    color: #555555;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Досвід роботи */
+.experience-item {
+    margin-bottom: 30px;
+    position: relative;
+    padding-left: 25px;
+}
+
+.experience-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    background-color: #ff6b6b;
+    border-radius: 50%;
+}
+
+.job-position {
+    font-weight: 600;
+    color: #333333;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* Списки */
+.standard-list,
+.link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.standard-list li,
+.link-list li {
+    margin-bottom: 12px;
+    color: #555555;
+    font-size: 15px;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 20px;
+}
+
+.standard-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #ff6b6b;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.link-list a {
+    color: #ff6b6b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.link-list a:hover {
+    color: #ff8e53;
+}
+
+/* Стилі для друку */
+@media print {
+    body {
+        background-color: #ffffff;
+    }
+
+    .cv-container {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .cv-sidebar {
+        background: #f8f9fa;
+        color: #333333;
+    }
+
+    .section-heading,
+    .skill-name,
+    .degree-title,
+    .contact-text,
+    .contact-text a {
+        color: #333333;
+    }
+
+    .contact-item,
+    .skill-item,
+    .education-item {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+    }
+
+    .actions {
+        display: none;
+    }
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .cv-container {
+        flex-direction: column;
+        border-radius: 0;
+    }
+
+    .cv-sidebar {
+        width: 100%;
+        padding: 30px 20px;
+    }
+
+    .cv-main {
+        padding: 20px;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .name {
+        font-size: 32px;
+    }
+
+    .main-section-heading {
+        font-size: 20px;
+    }
+}

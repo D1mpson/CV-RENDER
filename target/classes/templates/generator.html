@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Generator - Створення CV</title>
+    <link rel="stylesheet" th:href="@{/css/other-page/header.css}">
+    <link rel="stylesheet" th:href="@{/css/user/generator.css}">
+    <link rel="stylesheet" th:href="@{/css/other-page/footer.css}">
+</head>
+<body>
+<!-- Підключення хедера -->
+<div th:replace="~{header :: header}"></div>
+
+<!-- Main content -->
+<main class="main-content">
+    <h1>Створення нового CV</h1>
+
+    <form th:action="${cv.id != null ? '/cv/' + cv.id + '/edit' : '/generator'}"
+          th:object="${cv}" method="post" enctype="multipart/form-data">
+
+        <!-- Основна інформація -->
+        <div class="form-section basic-info">
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="name">Назва CV</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Шрифт</label>
+                    <div class="font-options">
+                        <div class="font-option">
+                            <input type="radio" id="font-arial" name="font" value="Arial" th:field="*{font}">
+                            <label for="font-arial" class="option-label">Arial</label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="font-times" name="font" value="Times New Roman" th:field="*{font}">
+                            <label for="font-times" class="option-label">Times New Roman</label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="font-calibri" name="font" value="Calibri" th:field="*{font}">
+                            <label for="font-calibri" class="option-label">Calibri</label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="font-verdana" name="font" value="Verdana" th:field="*{font}">
+                            <label for="font-verdana" class="option-label">Verdana</label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="font-roboto" name="font" value="Roboto" th:field="*{font}">
+                            <label for="font-roboto" class="option-label">Roboto</label>
+                        </div>
+                        <div class="font-option">
+                            <input type="radio" id="font-anonymous" name="font" value="Anonymous Pro" th:field="*{font}">
+                            <label for="font-anonymous" class="option-label">Anonymous Pro</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Мова CV</label>
+                    <div class="language-options">
+                        <div class="language-option">
+                            <input type="radio" id="lang-uk" name="language" value="uk" th:field="*{language}">
+                            <label for="lang-uk" class="option-label">Українська</label>
+                        </div>
+                        <div class="language-option">
+                            <input type="radio" id="lang-en" name="language" value="en" th:field="*{language}">
+                            <label for="lang-en" class="option-label">Англійська</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Секція для фото -->
+                <div class="form-group">
+                    <label>Ваше фото</label>
+                    <div class="file-upload" style="margin-top: 10px; margin-bottom: 10px;">
+                        <label for="photo" class="file-upload-label" style="padding: 10px 225px; background-color: #f0f0f0; border-radius: 4px; cursor: pointer; display: inline-block;">Виберіть файл</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" style="display: none;">
+                    </div>
+                    <p class="form-hint">Рекомендований розмір фото: 3:4, формат: JPG, PNG, максимальний розмір: 10МБ</p>
+                    <p class="form-hint">Якщо ви обрали файл, він обовʼязково завантажиться.</p>
+
+                </div>
+            </div>
+
+            <div class="form-column">
+                <div class="form-group">
+                    <label for="aboutMe">Про себе</label>
+                    <textarea class="form-control" id="aboutMe" th:field="*{aboutMe}" rows="6"
+                              placeholder="Напишіть короткий опис себе"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <h4>Хобі</h4>
+                    <div class="hobbies-inputs">
+                        <input type="text" name="hobbiesItems" placeholder="Хобі"
+                               th:value="${cv.hobbies != null && !cv.hobbies.isEmpty() ? #strings.arraySplit(cv.hobbies, ',')[0] : ''}">
+                        <input type="text" name="hobbiesItems" placeholder="Хобі"
+                               th:value="${cv.hobbies != null && #strings.arraySplit(cv.hobbies, ',').length > 1 ? #strings.arraySplit(cv.hobbies, ',')[1] : ''}">
+                        <input type="text" name="hobbiesItems" placeholder="Хобі"
+                               th:value="${cv.hobbies != null && #strings.arraySplit(cv.hobbies, ',').length > 2 ? #strings.arraySplit(cv.hobbies, ',')[2] : ''}">
+                        <input type="text" name="hobbiesItems" placeholder="Хобі"
+                               th:value="${cv.hobbies != null && #strings.arraySplit(cv.hobbies, ',').length > 3 ? #strings.arraySplit(cv.hobbies, ',')[3] : ''}">
+                        <input type="text" name="hobbiesItems" placeholder="Хобі"
+                               th:value="${cv.hobbies != null && #strings.arraySplit(cv.hobbies, ',').length > 4 ? #strings.arraySplit(cv.hobbies, ',')[4] : ''}">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Секція з вкладками для різних категорій інформації - без JS -->
+        <!-- Розділ "Інформація для резюме" -->
+        <div class="info-section">
+            <h2>Інформація для резюме</h2>
+
+            <!-- Навички -->
+            <div class="section-container">
+                <h3>Навички</h3>
+                <div class="skills-container">
+                    <div class="skills-column">
+                        <h4>Софт скіли</h4>
+                        <div class="skills-inputs">
+                            <input type="text" name="softSkillsItems" placeholder="Навичка (наприклад: комунікабельність)"
+                                   th:value="${cv.softSkills != null && !cv.softSkills.isEmpty() ? #strings.arraySplit(cv.softSkills, ',')[0] : ''}">
+                            <input type="text" name="softSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.softSkills != null && #strings.arraySplit(cv.softSkills, ',').length > 1 ? #strings.arraySplit(cv.softSkills, ',')[1] : ''}">
+                            <input type="text" name="softSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.softSkills != null && #strings.arraySplit(cv.softSkills, ',').length > 2 ? #strings.arraySplit(cv.softSkills, ',')[2] : ''}">
+                            <input type="text" name="softSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.softSkills != null && #strings.arraySplit(cv.softSkills, ',').length > 3 ? #strings.arraySplit(cv.softSkills, ',')[3] : ''}">
+                            <input type="text" name="softSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.softSkills != null && #strings.arraySplit(cv.softSkills, ',').length > 4 ? #strings.arraySplit(cv.softSkills, ',')[4] : ''}">
+                        </div>
+                    </div>
+
+                    <div class="skills-column">
+                        <h4>Хард скіли</h4>
+                        <div class="skills-inputs">
+                            <input type="text" name="hardSkillsItems" placeholder="Навичка (наприклад: HTML/CSS)"
+                                   th:value="${cv.hardSkills != null && !cv.hardSkills.isEmpty() ? #strings.arraySplit(cv.hardSkills, ',')[0] : ''}">
+                            <input type="text" name="hardSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.hardSkills != null && #strings.arraySplit(cv.hardSkills, ',').length > 1 ? #strings.arraySplit(cv.hardSkills, ',')[1] : ''}">
+                            <input type="text" name="hardSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.hardSkills != null && #strings.arraySplit(cv.hardSkills, ',').length > 2 ? #strings.arraySplit(cv.hardSkills, ',')[2] : ''}">
+                            <input type="text" name="hardSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.hardSkills != null && #strings.arraySplit(cv.hardSkills, ',').length > 3 ? #strings.arraySplit(cv.hardSkills, ',')[3] : ''}">
+                            <input type="text" name="hardSkillsItems" placeholder="Навичка"
+                                   th:value="${cv.hardSkills != null && #strings.arraySplit(cv.hardSkills, ',').length > 4 ? #strings.arraySplit(cv.hardSkills, ',')[4] : ''}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Мови -->
+            <div class="section-container">
+                <h3>Мови</h3>
+                <div class="languages-container">
+                    <h4>Мови, якими ви володієте</h4>
+                    <div class="languages-checkboxes">
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Українська" id="langUkrainian"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Українська')}">
+                            <label for="langUkrainian">Українська</label>
+                        </div>
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Англійська" id="langEnglish"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Англійська')}">
+                            <label for="langEnglish">Англійська</label>
+                        </div>
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Німецька" id="langGerman"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Німецька')}">
+                            <label for="langGerman">Німецька</label>
+                        </div>
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Французька" id="langFrench"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Французька')}">
+                            <label for="langFrench">Французька</label>
+                        </div>
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Іспанська" id="langSpanish"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Іспанська')}">
+                            <label for="langSpanish">Іспанська</label>
+                        </div>
+                        <div class="language-checkbox">
+                            <input type="checkbox" name="knownLanguages" value="Польська" id="langPolish"
+                                   th:checked="${cv.knownLanguages != null && cv.knownLanguages.contains('Польська')}">
+                            <label for="langPolish">Польська</label>
+                        </div>
+                    </div>
+
+                    <div class="other-languages">
+                        <label for="otherLanguages">Інші мови</label>
+                        <textarea id="otherLanguages" name="otherLanguages" th:field="*{otherLanguages}"
+                                  placeholder="Вкажіть інші мови, якими ви володієте, через кому (&quot;,&quot;)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Освіта -->
+            <div class="section-container">
+                <h3>Освіта</h3>
+                <div class="education-container">
+                    <div class="education-column">
+                        <h4>Освіта</h4>
+                        <div class="education-inputs">
+                            <input type="text" name="educationItems" placeholder="Навчальний заклад, спеціальність, період навчання"
+                                   th:value="${cv.education != null && !cv.education.isEmpty() ? #strings.arraySplit(cv.education, ',')[0] : ''}">
+                            <input type="text" name="educationItems" placeholder="Навчальний заклад, спеціальність, період навчання"
+                                   th:value="${cv.education != null && #strings.arraySplit(cv.education, ',').length > 1 ? #strings.arraySplit(cv.education, ',')[1] : ''}">
+                            <input type="text" name="educationItems" placeholder="Навчальний заклад, спеціальність, період навчання"
+                                   th:value="${cv.education != null && #strings.arraySplit(cv.education, ',').length > 2 ? #strings.arraySplit(cv.education, ',')[2] : ''}">
+                            <input type="text" name="educationItems" placeholder="Навчальний заклад, спеціальність, період навчання"
+                                   th:value="${cv.education != null && #strings.arraySplit(cv.education, ',').length > 3 ? #strings.arraySplit(cv.education, ',')[3] : ''}">
+                            <input type="text" name="educationItems" placeholder="Навчальний заклад, спеціальність, період навчання"
+                                   th:value="${cv.education != null && #strings.arraySplit(cv.education, ',').length > 4 ? #strings.arraySplit(cv.education, ',')[4] : ''}">
+                        </div>
+                    </div>
+
+                    <div class="education-column">
+                        <h4>Курси та сертифікати</h4>
+                        <div class="courses-inputs">
+                            <input type="text" name="coursesItems" placeholder="Назва курсу, організація, дата закінчення"
+                                   th:value="${cv.courses != null && !cv.courses.isEmpty() ? #strings.arraySplit(cv.courses, ',')[0] : ''}">
+                            <input type="text" name="coursesItems" placeholder="Назва курсу, організація, дата закінчення"
+                                   th:value="${cv.courses != null && #strings.arraySplit(cv.courses, ',').length > 1 ? #strings.arraySplit(cv.courses, ',')[1] : ''}">
+                            <input type="text" name="coursesItems" placeholder="Назва курсу, організація, дата закінчення"
+                                   th:value="${cv.courses != null && #strings.arraySplit(cv.courses, ',').length > 2 ? #strings.arraySplit(cv.courses, ',')[2] : ''}">
+                            <input type="text" name="coursesItems" placeholder="Назва курсу, організація, дата закінчення"
+                                   th:value="${cv.courses != null && #strings.arraySplit(cv.courses, ',').length > 3 ? #strings.arraySplit(cv.courses, ',')[3] : ''}">
+                            <input type="text" name="coursesItems" placeholder="Назва курсу, організація, дата закінчення"
+                                   th:value="${cv.courses != null && #strings.arraySplit(cv.courses, ',').length > 4 ? #strings.arraySplit(cv.courses, ',')[4] : ''}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Робота (зайнятість) -->
+            <div class="section-container">
+                <h3>Робота (зайнятість)</h3>
+                <div class="experience-container">
+                    <h4>Досвід роботи</h4>
+                    <div class="experience-inputs">
+                        <input type="text" name="workExperienceItems" placeholder="Компанія, посада, період роботи"
+                               th:value="${cv.workExperience != null && !cv.workExperience.isEmpty() ? #strings.arraySplit(cv.workExperience, ',')[0] : ''}">
+                        <input type="text" name="workExperienceItems" placeholder="Компанія, посада, період роботи"
+                               th:value="${cv.workExperience != null && #strings.arraySplit(cv.workExperience, ',').length > 1 ? #strings.arraySplit(cv.workExperience, ',')[1] : ''}">
+                        <input type="text" name="workExperienceItems" placeholder="Компанія, посада, період роботи"
+                               th:value="${cv.workExperience != null && #strings.arraySplit(cv.workExperience, ',').length > 2 ? #strings.arraySplit(cv.workExperience, ',')[2] : ''}">
+                        <input type="text" name="workExperienceItems" placeholder="Компанія, посада, період роботи"
+                               th:value="${cv.workExperience != null && #strings.arraySplit(cv.workExperience, ',').length > 3 ? #strings.arraySplit(cv.workExperience, ',')[3] : ''}">
+                        <input type="text" name="workExperienceItems" placeholder="Компанія, посада, період роботи"
+                               th:value="${cv.workExperience != null && #strings.arraySplit(cv.workExperience, ',').length > 4 ? #strings.arraySplit(cv.workExperience, ',')[4] : ''}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Портфоліо -->
+            <div class="section-container">
+                <h3>Портфоліо</h3>
+                <div class="portfolio-container">
+                    <h4>Посилання на ваші роботи</h4>
+                    <p class="portfolio-hint">Додайте посилання на ваші проекти, профілі, портфоліо тощо.</p>
+                    <div class="portfolio-inputs">
+                        <input type="text" name="portfolioLinks" placeholder="https://example.com/my-project"
+                               th:value="${cv.portfolioLinks != null && cv.portfolioLinks.size() > 0 ? cv.portfolioLinks[0] : ''}">
+                        <input type="text" name="portfolioLinks" placeholder="https://github.com/username"
+                               th:value="${cv.portfolioLinks != null && cv.portfolioLinks.size() > 1 ? cv.portfolioLinks[1] : ''}">
+                        <input type="text" name="portfolioLinks" placeholder="https://linkedin.com/in/username"
+                               th:value="${cv.portfolioLinks != null && cv.portfolioLinks.size() > 2 ? cv.portfolioLinks[2] : ''}">
+                        <input type="text" name="portfolioLinks" placeholder="https://behance.net/username"
+                               th:value="${cv.portfolioLinks != null && cv.portfolioLinks.size() > 3 ? cv.portfolioLinks[3] : ''}">
+                        <input type="text" name="portfolioLinks" placeholder="Інше посилання..."
+                               th:value="${cv.portfolioLinks != null && cv.portfolioLinks.size() > 4 ? cv.portfolioLinks[4] : ''}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вибір шаблону -->
+        <div class="template-section">
+            <h2>Виберіть шаблон</h2>
+            <div class="template-grid">
+                <div class="template-card" th:each="template : ${templates}">
+                    <div class="template-preview">
+                        <img th:src="${template.previewImagePath}" alt="Preview" onerror="this.src='/images/templates/default-preview.jpg'">
+                    </div>
+                    <div class="template-info">
+                        <h3 th:text="${template.name}">Professional</h3>
+                        <p th:text="${template.description}">Класичний професійний шаблон, підходить для більшості галузей</p>
+                        <div class="template-select">
+                            <input type="radio" name="templateId" th:id="'template-' + ${template.id}" th:value="${template.id}"
+                                   th:checked="${cv.template != null && cv.template.id == template.id}">
+                            <label th:for="'template-' + ${template.id}">Обрати</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки дій -->
+        <div class="form-actions">
+            <a href="/all-cv" class="btn btn-cancel">Скасувати</a>
+            <button type="submit" class="btn btn-save">
+                <span th:if="${cv.id != null}">Зберегти зміни</span>
+                <span th:unless="${cv.id != null}">Створити CV</span>
+            </button>
+        </div>
+    </form>
+</main>
+
+<!-- Підключення футера -->
+<div th:replace="~{footer :: footer}"></div>
+</body>
+</html>

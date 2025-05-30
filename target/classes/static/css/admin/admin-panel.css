@@ -1,0 +1,312 @@
+/* admin-panel-monochrome.css */
+:root {
+    /* Основні кольори */
+    --dark-color: #212121;
+    --medium-dark-color: #424242;
+    --medium-color: #757575;
+    --light-medium-color: #BDBDBD;
+    --light-color: #F5F5F5;
+    --white-color: #FFFFFF;
+
+    /* Функціональні кольори */
+    --details-color: #424242;
+    --admin-edit-color: #9E9E9E;
+    --error-color: #616161;
+
+    /* Фонові кольори */
+    --primary-bg: var(--white-color);
+    --secondary-bg: var(--light-color);
+    --table-row-even: #F5F5F5;
+    --table-row-hover: #EEEEEE;
+
+    /* Тексти */
+    --text-color: #212121;
+    --text-light: #757575;
+
+    /* Рамки */
+    --light-border: #E0E0E0;
+
+    /* Розміри та відступи */
+    --container-max-width: 1200px;
+    --container-padding: 20px;
+    --section-gap: 30px;
+    --border-radius: 6px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+    flex: 1;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: var(--container-padding);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-panel-container {
+    background: var(--white-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    margin-bottom: var(--section-gap);
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--light-border);
+}
+
+.panel-header {
+    background: var(--dark-color);
+    color: var(--white-color);
+    padding: 20px;
+    text-align: center;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.panel-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.panel-content {
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.table-header {
+    background: var(--medium-dark-color);
+    color: var(--white-color);
+    padding: 15px 20px;
+}
+
+.table-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+    padding: 10px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--light-border);
+}
+
+.users-table th {
+    background-color: var(--medium-color);
+    color: var(--white-color);
+    font-weight: 500;
+}
+
+.users-table tr:nth-child(even) {
+    background-color: var(--table-row-even);
+}
+
+.users-table tr:hover {
+    background-color: var(--table-row-hover);
+}
+
+.actions {
+    white-space: nowrap;
+    display: flex;
+    gap: 5px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-details {
+    background-color: var(--details-color);
+    color: var(--white-color);
+}
+
+.btn-edit {
+    background-color: var(--admin-edit-color);
+    color: var(--white-color);
+}
+
+.btn-delete {
+    background-color: var(--error-color);
+    color: var(--white-color);
+}
+
+.btn-details:hover {
+    background-color: #313131;
+}
+
+.btn-edit:hover {
+    background-color: #7D7D7D;
+}
+
+.btn-delete:hover {
+    background-color: #4A4A4A;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+/* Пошук */
+
+.search-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+}
+
+.search-input-container {
+    display: flex;
+    width: 100%;
+    max-width: 500px;
+}
+
+.search-input-container input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.btn-search {
+    padding: 10px 15px;
+    background-color: #424242;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.btn-search:hover {
+    background-color: #6d776e;
+}
+/* Адаптивність для мобільних пристроїв */
+
+
+@media (max-width: 1200px) {
+    .users-table th,
+    .users-table td {
+        padding: 8px 5px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        padding: 15px;
+    }
+
+    .users-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .users-table th,
+    .users-table td {
+        font-size: 13px;
+        word-break: break-word;
+    }
+
+    /* Приховуємо менш важливі колонки на менших екранах */
+    .hide-sm {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .panel-header h1 {
+        font-size: 20px;
+    }
+
+    /* Змінюємо відображення таблиці для маленьких екранів */
+    .users-table thead {
+        display: none;
+    }
+
+    .users-table,
+    .users-table tbody,
+    .users-table tr,
+    .users-table td {
+        display: block;
+        width: 100%;
+        text-align: right;
+    }
+
+    .users-table tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--light-border);
+        border-radius: var(--border-radius);
+    }
+
+    .users-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid var(--light-border);
+    }
+
+    .users-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .users-table td:last-child {
+        border-bottom: 0;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .btn {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .panel-header {
+        padding: 15px;
+    }
+
+    .panel-header h1 {
+        font-size: 18px;
+    }
+}
