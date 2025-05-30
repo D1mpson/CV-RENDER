@@ -7,36 +7,67 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
+import java.net.URI;
 
 @Configuration
 public class DatabaseConfig {
 
-    @Value("${DATABASE_URL:postgresql://localhost:5432/cv}")
+    @Value("${DATABASE_URL:postgresql://postgres:dimpsonteam2256@localhost:5432/cv}")
     private String databaseUrl;
-
-    @Value("${DB_USERNAME:postgres}")
-    private String username;
-
-    @Value("${DB_PASSWORD:dimpsonteam2256}")
-    private String password;
 
     @Bean
     @Primary
     public DataSource dataSource() {
-        // Автоматично додаємо jdbc: якщо його немає
-        String jdbcUrl = databaseUrl;
-        if (!jdbcUrl.startsWith("jdbc:")) {
-            jdbcUrl = "jdbc:" + jdbcUrl;
+        System.out.println("🔧 Raw DATABASE_URL: " + databaseUrl);
+
+        try {
+            // Парсимо URL вручну
+            String cleanUrl = databaseUrl;
+            if (cleanUrl.startsWith("postgres://")) {
+                cleanUrl = cleanUrl.replace("postgres://", "postgresql://");
+            }
+
+            System.out.println("🔧 Clean URL: " + cleanUrl);
+
+            URI uri = new URI(cleanUrl);
+
+            String host = uri.getHost();
+            int port = uri.getPort();
+            String database = uri.getPath().substring(1); // видаляємо перший "/"
+            String[] userInfo = uri.getUserInfo().split(":");
+            String username = userInfo[0];
+            String password = userInfo.length > 1 ? userInfo[1] : "";
+
+            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", host, port, database);
+
+            System.out.println("🔗 Host: " + host);
+            System.out.println("🔗 Port: " + port);
+            System.out.println("🔗 Database: " + database);
+            System.out.println("👤 Username: " + username);
+            System.out.println("🔒 Password length: " + password.length());
+            System.out.println("🔗 JDBC URL: " + jdbcUrl);
+
+            // Тест з'єднання
+            DataSource ds = DataSourceBuilder.create()
+                    .url(jdbcUrl)
+                    .username(username)
+                    .password(password)
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
+
+            System.out.println("✅ DataSource створено успішно");
+            return ds;
+
+        } catch (Exception e) {
+            System.err.println("❌ Error parsing DATABASE_URL: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback для локальної розробки
+            return DataSourceBuilder.create()
+                    .url("jdbc:postgresql://localhost:5432/cv")
+                    .username("postgres")
+                    .password("dimpsonteam2256")
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
         }
-
-        System.out.println("🔗 Connecting to: " + jdbcUrl);
-        System.out.println("👤 Username: " + username);
-
-        return DataSourceBuilder.create()
-                .url(jdbcUrl)
-                .username(username)
-                .password(password)
-                .driverClassName("org.postgresql.Driver")
-                .build();
     }
 }
