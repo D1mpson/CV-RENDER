@@ -51,7 +51,11 @@ public class UserService implements UserDetailsService {
                 u.setBirthDate(rs.getObject("birth_date", LocalDate.class));
                 u.setCityLife(rs.getString("city_life"));
                 u.setRole(rs.getString("role"));
-                u.setEmailVerified(rs.getBoolean("email_verified"));
+
+                // Безпечне отримання boolean значення
+                Boolean verified = rs.getObject("email_verified", Boolean.class);
+                u.setEmailVerified(verified != null ? verified : false);
+
                 return u;
             });
             return Optional.ofNullable(user);

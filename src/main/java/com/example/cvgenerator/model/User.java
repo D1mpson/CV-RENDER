@@ -54,9 +54,9 @@ public class User {
 
     private String role = "ROLE_USER";
 
-    // Email верифікація
+    // Email верифікація - використовуємо Boolean замість boolean для підтримки null
     @Column(name = "email_verified")
-    private boolean emailVerified = false;
+    private Boolean emailVerified = false;
 
     @Column(name = "verification_token")
     private String verificationToken;
@@ -70,5 +70,14 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        // Встановлюємо дефолтне значення якщо null
+        if (emailVerified == null) {
+            emailVerified = false;
+        }
+    }
+
+    // Додаємо helper метод для boolean операцій
+    public boolean isEmailVerified() {
+        return emailVerified != null && emailVerified;
     }
 }
