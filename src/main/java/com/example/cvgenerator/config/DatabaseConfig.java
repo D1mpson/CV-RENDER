@@ -66,20 +66,25 @@ public class DatabaseConfig {
             config.setPassword(password);
             config.setDriverClassName("org.postgresql.Driver");
 
-            // Мінімальні налаштування для Supabase Free tier (ліміт: ~15 підключень)
-            config.setMaximumPoolSize(1);  // КРИТИЧНО: тільки 1 підключення
-            config.setMinimumIdle(0);      // Без idle підключень
-            config.setConnectionTimeout(30000);  // 30 секунд
-            config.setIdleTimeout(300000);       // 5 хвилин
-            config.setMaxLifetime(600000);       // 10 хвилин
-            config.setLeakDetectionThreshold(60000); // 1 хвилина
-            config.setInitializationFailTimeout(1);
+            // Мінімальні налаштування для Supabase Free tier
+            config.setMaximumPoolSize(1);
+            config.setMinimumIdle(0);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(120000);     // 2 хвилини замість 5
+            config.setMaxLifetime(300000);     // 5 хвилин замість 10
+            config.setLeakDetectionThreshold(0); // Відключаємо для економії ресурсів
+            config.setInitializationFailTimeout(-1); // Не фейлити одразу
 
-            // Додаткові оптимізації
+            // Додаткові оптимізації для Supabase
             config.addDataSourceProperty("tcpKeepAlive", "true");
-            config.addDataSourceProperty("socketTimeout", "30");
+            config.addDataSourceProperty("socketTimeout", "20");
             config.addDataSourceProperty("loginTimeout", "10");
             config.addDataSourceProperty("cancelSignalTimeout", "10");
+            config.addDataSourceProperty("connectTimeout", "10");
+
+            // КРИТИЧНО: Додаємо retry механізм
+            config.setConnectionTestQuery("SELECT 1");
+            config.setValidationTimeout(5000);
 
             HikariDataSource ds = new HikariDataSource(config);
 
@@ -90,19 +95,14 @@ public class DatabaseConfig {
             return ds;
 
         } catch (Exception e) {
-            System.err.println("❌ Error parsing DATABASE_URL: " + e.getMessage());
+            System.err.println("❌ Critical Error with DATABASE_URL: " + e.getMessage());
             e.printStackTrace();
 
-            // Fallback для локальної розробки БЕЗ SSL
-            HikariConfig fallbackConfig = new HikariConfig();
-            fallbackConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0");
-            fallbackConfig.setUsername("postgres");
-            fallbackConfig.setPassword("dimpsonteam2256");
-            fallbackConfig.setDriverClassName("org.postgresql.Driver");
-            fallbackConfig.setMaximumPoolSize(2);
-            fallbackConfig.setMinimumIdle(1);
+            // ВИДАЛЕНО FALLBACK - якщо Supabase не працює, краще зупинити додаток
+            // ніж намагатися підключитися до неіснуючого localhost
 
-            return new HikariDataSource(fallbackConfig);
+            throw new RuntimeException("Не вдалося підключитися до бази даних. " +
+                    "Перевірте DATABASE_URL та доступність Supabase. Error: " + e.getMessage(), e);
         }
     }
 }
