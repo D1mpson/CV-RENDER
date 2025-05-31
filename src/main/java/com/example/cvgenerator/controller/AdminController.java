@@ -37,12 +37,25 @@ public class AdminController {
 
     @GetMapping
     public String showAdminPanel(Model model, Authentication authentication) {
-        System.out.println("Поточний користувач: " + authentication.getName());
-        System.out.println("Авторитети: " + authentication.getAuthorities());
+        try {
+            System.out.println("🔍 AdminController: Начало метода showAdminPanel");
+            System.out.println("   Текущий пользователь: " + authentication.getName());
+            System.out.println("   Авторитеты: " + authentication.getAuthorities());
 
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
-        return "admin/admin-panel";
+            // Используем новый метод с инициализацией CV
+            List<User> users = userService.getAllUsersWithCVCount();
+            System.out.println("   Найдено пользователей: " + (users != null ? users.size() : "null"));
+
+            model.addAttribute("users", users);
+            System.out.println("✅ AdminController: Успешно подготовлена модель");
+            return "admin/admin-panel";
+
+        } catch (Exception e) {
+            System.err.println("❌ AdminController error: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Ошибка загрузки данных: " + e.getMessage());
+            return "admin/admin-panel";
+        }
     }
 
     @GetMapping("/users/{id}")

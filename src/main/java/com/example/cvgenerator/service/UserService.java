@@ -197,4 +197,21 @@ public class UserService implements UserDetailsService {
                 .filter(user -> role.equals(user.getRole()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<User> getAllUsersWithCVCount() {
+        List<User> users = userRepository.findAll();
+
+        // Принудительно инициализируем cvList для каждого пользователя
+        for (User user : users) {
+            try {
+                // Hibernate.initialize(user.getCvList()); // альтернатива
+                user.getCvList().size(); // инициализация через обращение к размеру
+            } catch (Exception e) {
+                System.err.println("Ошибка инициализации CV списка для пользователя " + user.getId() + ": " + e.getMessage());
+            }
+        }
+
+        return users;
+    }
 }
