@@ -1,0 +1,220 @@
+/* login.css */
+@import '../other-page/variables.css';
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Додайте ці стилі до існуючого login.css */
+
+/* Alert для інформаційних повідомлень */
+.alert-info {
+    background-color: #E3F2FD;
+    color: #1976D2;
+    border: 1px solid #BBDEFB;
+    padding: 10px;
+    margin-bottom: var(--section-gap);
+    border-radius: var(--border-radius);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--light-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.login-header {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 20px;
+    text-align: center;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.login-header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.login-form {
+    padding: var(--form-padding);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: var(--section-gap);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-actions {
+    margin-top: var(--section-gap);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: var(--section-gap);
+}
+
+.register-link a {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.btn-login {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 15px;
+    border-radius: var(--border-radius-rounded);
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.btn-login:hover {
+    background-color: #333;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px;
+    margin-bottom: var(--section-gap);
+    border-radius: var(--border-radius);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.alert-danger {
+    background-color: #FFEBEE;
+    color: var(--error-color);
+    border: 1px solid #FFCDD2;
+}
+
+.alert-success {
+    background-color: #E8F5E9;
+    color: #4CAF50;
+    border: 1px solid #C8E6C9;
+}
+
+/* Media queries для адаптивності */
+@media (max-width: 992px) {
+    .main-content {
+        padding: 30px;
+    }
+
+    .login-container {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: var(--container-padding);
+    }
+
+    .login-container {
+        border-radius: var(--border-radius);
+        max-width: 100%;
+    }
+
+    .login-header {
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+
+    .login-form {
+        padding: 20px;
+    }
+
+    .form-control {
+        font-size: 14px;
+    }
+
+    .btn-login {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .login-header h1 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 15px 10px;
+    }
+
+    .login-container {
+        border-radius: 5px;
+    }
+
+    .login-header {
+        padding: 15px;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .login-header h1 {
+        font-size: 18px;
+    }
+
+    .login-form {
+        padding: 15px;
+    }
+
+    .form-control {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .btn-login {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .register-link {
+        font-size: 13px;
+    }
+}

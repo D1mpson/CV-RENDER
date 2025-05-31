@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<!-- Footer фрагмент -->
+<footer th:fragment="footer" class="footer">
+    <div class="footer-container">
+        <!-- Логотип та текст -->
+        <div class="footer-logo">
+            <img src="/images/cv-illustration.webp" alt="CV Generator" class="logo-image-footer">
+            <p class="footer-tagline" th:text="#{app.description}">Створюйте професійні резюме швидко та зручно</p>
+        </div>
+
+        <!-- Навігація та мова -->
+        <div class="footer-links">
+            <div class="footer-section">
+                <h3 th:text="#{nav.home}">Навігація</h3>
+                <ul>
+                    <li><a th:href="@{/}" th:text="#{nav.home}">Головна</a></li>
+                    <li><a th:href="@{/help}" th:text="#{nav.help}">Довідка</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 th:text="#{language.title}">Мова</h3>
+                <ul>
+                    <li><a th:href="@{''(lang='uk')}" th:text="#{language.uk}">Українська</a></li>
+                    <li><a th:href="@{''(lang='en')}" th:text="#{language.en}">Англійська</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

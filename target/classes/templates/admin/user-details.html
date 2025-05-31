@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Generator - Деталі користувача</title>
+    <link rel="stylesheet" th:href="@{/css/other-page/header.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/user-details.css}">
+    <link rel="stylesheet" th:href="@{/css/other-page/footer.css}">
+</head>
+<body>
+<!-- Підключення хедера -->
+<div th:replace="~{header :: header}"></div>
+
+<!-- Main content -->
+<main class="main-content">
+    <div class="page-container">
+
+        <!-- Лівий блок -->
+        <div class="user-info-block">
+            <div class="block-header">
+                <h2>Інформація про користувача</h2>
+            </div>
+
+            <div class="block-content">
+                <h3 class="user-name" th:text="${user.firstName + ' ' + user.lastName}">First_name Last_name</h3>
+
+                <p class="user-id">ID: <span th:text="${user.id}">(id)</span></p>
+
+                <p class="user-email">Email: <span th:text="${user.email}">email@email.domain</span></p>
+
+                <p class="user-phone">Телефон: <span th:text="${user.phoneNumber}">+380XXXXXXXXX</span></p>
+
+                <p class="user-birth">Дата народження: <span th:text="${#temporals.format(user.birthDate, 'dd.MM.yyyy')}">DD.MM.YYYY</span></p>
+
+                <div class="user-actions">
+                    <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-edit">Редагувати профіль</a>
+                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Ви впевнені, що хочете видалити цього користувача?');">Видалити</button>
+                    </form>
+                    <a th:href="@{/admin}" class="btn btn-view">Назад до списку</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Правий блок -->
+        <div class="user-cv-block">
+            <div class="block-header">
+                <h2>Резюме користувача</h2>
+            </div>
+
+            <div class="block-content">
+                <div th:if="${cvList.isEmpty()}" class="no-cv-message">
+                    <p>У користувача ще немає створених резюме.</p>
+                </div>
+
+                <div th:unless="${cvList.isEmpty()}" class="cv-grid">
+                    <div th:each="cv : ${cvList}" class="cv-card">
+                        <h3 th:text="${cv.name}">Name CV</h3>
+
+                        <p class="cv-template">
+                            <span class="label">Шаблон:</span><br>
+                            <span th:text="${cv.template != null ? cv.template.name : 'Не вказано'}" class="value">шаблон CV</span>
+                        </p>
+
+                        <p class="cv-date">
+                            <span class="label">Створено:</span><br>
+                            <span th:text="${#temporals.format(cv.createdAt, 'dd.MM.yyyy HH:mm')}" class="value">дата створення</span>
+                        </p>
+
+                        <div class="cv-buttons">
+                            <a th:href="@{/admin/cv/{id}(id=${cv.id})}" class="btn btn-view">Переглянути</a>
+                            <form th:action="@{/admin/cv/{id}/delete(id=${cv.id})}" method="post">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-delete" onclick="return confirm('Ви впевнені, що хочете видалити це резюме?');">Видалити</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Підключення футера -->
+<div th:replace="~{footer :: footer}"></div>
+</body>
+</html>

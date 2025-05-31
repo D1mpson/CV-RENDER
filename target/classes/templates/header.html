@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<!-- Header фрагмент -->
+<header th:fragment="header" class="header">
+    <!-- Логотип -->
+    <div class="logo">
+        <a href="/">
+            <img src="/images/cv-illustration.webp" alt="CV Generator" class="logo-image">
+        </a>
+    </div>
+
+    <!-- Навігація для адміністратора -->
+    <nav class="main-nav" sec:authorize="hasRole('ADMIN')">
+        <ul class="nav-links">
+            <li><a th:href="@{/}" th:text="#{nav.home}">Головна</a></li>
+            <li><a th:href="@{/generator}" th:text="#{nav.create}">Створити CV</a></li>
+            <li><a th:href="@{/all-cv}" th:text="#{nav.myCvs}">Мої CV</a></li>
+            <li><a th:href="@{/help}" th:text="#{nav.help}">Довідка</a></li>
+            <li><a th:href="@{/admin}" th:text="#{nav.admin}">Адмін-панель</a></li>
+        </ul>
+    </nav>
+
+    <!-- Навігація для авторизованого користувача -->
+    <nav class="main-nav" sec:authorize="isAuthenticated() and !hasAuthority('ROLE_ADMIN')">
+        <ul class="nav-links">
+            <li><a th:href="@{/}" th:text="#{nav.home}">Головна</a></li>
+            <li><a th:href="@{/generator}" th:text="#{nav.create}">Створити CV</a></li>
+            <li><a th:href="@{/all-cv}" th:text="#{nav.myCvs}">Мої CV</a></li>
+            <li><a th:href="@{/help}" th:text="#{nav.help}">Довідка</a></li>
+        </ul>
+    </nav>
+
+    <!-- Навігація для неавторизованого користувача -->
+    <nav class="main-nav" sec:authorize="!isAuthenticated()">
+        <ul class="nav-links">
+            <li><a th:href="@{/}" th:text="#{nav.home}">Головна</a></li>
+            <li><a th:href="@{/help}" th:text="#{nav.help}">Довідка</a></li>
+        </ul>
+    </nav>
+
+    <!-- Відображення email для авторизованого користувача -->
+    <div class="user-email" sec:authorize="isAuthenticated()">
+        <a th:href="@{/profile}">
+            <span sec:authentication="name">account@email.domain</span>
+        </a>
+    </div>
+
+
+    <!-- Кнопки для авторизованого користувача -->
+    <div class="auth-buttons" sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout" th:text="#{nav.logout}">Вийти</button>
+        </form>
+        <div class="language-switcher">
+            <a th:href="@{''(lang=uk)}" class="lang-link" th:classappend="${#locale.toString() == 'uk' ? 'active' : ''}">
+                <span th:text="#{language.uk}">UA</span>
+            </a>
+            <br>
+            <span class="lang-separator"></span>
+            <a th:href="@{''(lang=en)}" class="lang-link" th:classappend="${#locale.toString() == 'en' ? 'active' : ''}">
+                <span th:text="#{language.en}">EN</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Кнопки для неавторизованого користувача -->
+    <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}" class="btn btn-primary" th:text="#{nav.login}">Увійти</a>
+        <a th:href="@{/register}" class="btn btn-secondary" th:text="#{nav.register}">Зареєструватися</a>
+
+        <div class="language-switcher">
+            <a th:href="@{''(lang=uk)}" class="lang-link" th:classappend="${#locale.toString() == 'uk' ? 'active' : ''}">
+                <span th:text="#{language.uk}">UA</span>
+            </a>
+            <br>
+            <span class="lang-separator"></span>
+            <a th:href="@{''(lang=en)}" class="lang-link" th:classappend="${#locale.toString() == 'en' ? 'active' : ''}">
+                <span th:text="#{language.en}">EN</span>
+            </a>
+        </div>
+    </div>
+</header>
+</body>
+</html>

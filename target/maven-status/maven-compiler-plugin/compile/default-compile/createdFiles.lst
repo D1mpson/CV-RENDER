@@ -7,6 +7,7 @@ com/example/cvgenerator/config/CloudinaryConfig.class
 com/example/cvgenerator/config/DataInitializer.class
 com/example/cvgenerator/repository/CVRepository.class
 com/example/cvgenerator/service/CVService.class
+com/example/cvgenerator/service/EmailService.class
 com/example/cvgenerator/service/TemplateService.class
 com/example/cvgenerator/CvGeneratorApplication.class
 com/example/cvgenerator/service/CloudinaryService.class
@@ -15,6 +16,7 @@ com/example/cvgenerator/controller/CVController.class
 com/example/cvgenerator/controller/util/CVHelper.class
 com/example/cvgenerator/controller/StartPageController.class
 com/example/cvgenerator/model/Template.class
+com/example/cvgenerator/config/DatabaseConfig.class
 com/example/cvgenerator/repository/UserRepository.class
 com/example/cvgenerator/config/SecurityConfig.class
 com/example/cvgenerator/model/User.class
