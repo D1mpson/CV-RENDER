@@ -4,6 +4,7 @@
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/controller/util/CVHelper.java
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/service/CloudinaryService.java
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/repository/CVRepository.java
+/Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/config/DatabaseConfig.java
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/controller/UserController.java
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/controller/StartPageController.java
 /Users/artem/Documents/GitHub/CV-RENDER/src/main/java/com/example/cvgenerator/config/CloudinaryConfig.java

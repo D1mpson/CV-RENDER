@@ -46,21 +46,21 @@ public class DataInitializer {
         template1.setName("Professional");
         template1.setDescription("Класичний професійний шаблон, підходить для більшості галузей");
         template1.setHtmlPath("cv-1");
-        template1.setPreviewImagePath("/images/generator/Professional.webp");
+        template1.setPreviewImagePath("/images/generator/Professional.png");
         templateService.saveTemplate(template1);
 
         Template template2 = new Template();
         template2.setName("Creative");
         template2.setDescription("Сучасний креативний шаблон для дизайнерів та креативних професій");
         template2.setHtmlPath("cv-2");
-        template2.setPreviewImagePath("/images/generator/Creative.webp");
+        template2.setPreviewImagePath("/images/generator/Creative.png");
         templateService.saveTemplate(template2);
 
         Template template3 = new Template();
         template3.setName("Academic");
         template3.setDescription("Формальний шаблон для академічних та наукових позицій");
         template3.setHtmlPath("cv-3");
-        template3.setPreviewImagePath("/images/generator/Academic.webp");
+        template3.setPreviewImagePath("/images/generator/Academic.png");
         templateService.saveTemplate(template3);
     }
 

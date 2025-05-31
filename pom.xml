@@ -13,13 +13,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>cv-generator</name>
     <description>cv-generator</description>
-
     <properties>
         <java.version>17</java.version>
-        <!-- Відключаємо тести -->
-        <maven.test.skip>true</maven.test.skip>
     </properties>
-
     <dependencies>
         <!-- Spring Boot основні залежності -->
         <dependency>
@@ -63,7 +59,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- PostgreSQL драйвер -->
+        <!-- PostgreSQL драйвер для Supabase -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -110,7 +106,7 @@
             <version>5.5.13.3</version>
         </dependency>
 
-        <!-- Тестування (залишаємо, але тести відключені) -->
+        <!-- Тестування -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -161,7 +157,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
             <!-- Плагін для Lombok -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -179,15 +174,11 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
-            <!-- Плагін для тестування - ВІДКЛЮЧЕНО -->
+            <!-- Плагін для тестування -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
             </plugin>
         </plugins>
     </build>
