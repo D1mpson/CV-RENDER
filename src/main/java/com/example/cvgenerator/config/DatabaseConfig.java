@@ -1,7 +1,8 @@
 package com.example.cvgenerator.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -34,8 +35,8 @@ public class DatabaseConfig {
             URI uri = new URI(cleanUrl);
 
             String host = uri.getHost();
-            int port = uri.getPort() != -1 ? uri.getPort() : 5432; // Default PostgreSQL port
-            String database = uri.getPath().substring(1); // Видаляємо перший символ '/'
+            int port = uri.getPort() != -1 ? uri.getPort() : 5432;
+            String database = uri.getPath().substring(1);
 
             String username;
             String password;
@@ -45,24 +46,44 @@ public class DatabaseConfig {
                 username = userInfo[0];
                 password = userInfo.length > 1 ? userInfo[1] : "";
             } else {
-                // Fallback для локальної розробки
                 username = "postgres";
                 password = "dimpsonteam2256";
             }
 
             // Визначаємо SSL режим
-            String sslMode = "require"; // За замовчуванням require для продакшн
-
-            // Тільки для localhost вимикаємо SSL
+            String sslMode = "require";
             if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
                 sslMode = "disable";
             }
 
-            // Формуємо JDBC URL з правильними параметрами для Neon
-            String jdbcUrl = String.format(
-                    "jdbc:postgresql://%s:%d/%s?sslmode=%s",
-                    host, port, database, sslMode
-            );
+            // Створюємо HikariConfig вручну для повного контролю
+            HikariConfig config = new HikariConfig();
+
+            // Базові налаштування
+            config.setJdbcUrl(String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s", host, port, database, sslMode));
+            config.setUsername(username);
+            config.setPassword(password);
+            config.setDriverClassName("org.postgresql.Driver");
+
+            // Налаштування пулу для Neon/Render
+            config.setMaximumPoolSize(3);
+            config.setMinimumIdle(1);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(180000);
+            config.setMaxLifetime(300000);
+            config.setLeakDetectionThreshold(60000);
+
+            // КРИТИЧНО: Вимикаємо autoCommit
+            config.setAutoCommit(false);
+
+            // Додаткові налаштування для стабільності
+            config.addDataSourceProperty("tcpKeepAlive", "true");
+            config.addDataSourceProperty("socketTimeout", "30");
+            config.addDataSourceProperty("loginTimeout", "15");
+
+            // Валідація з'єднань
+            config.setConnectionTestQuery("SELECT 1");
+            config.setValidationTimeout(5000);
 
             System.out.println("🔗 Host: " + host);
             System.out.println("🔗 Port: " + port);
@@ -70,30 +91,29 @@ public class DatabaseConfig {
             System.out.println("👤 Username: " + username);
             System.out.println("🔒 Password length: " + password.length());
             System.out.println("🔗 SSL Mode: " + sslMode);
-            System.out.println("🔗 JDBC URL: " + jdbcUrl);
+            System.out.println("🔗 JDBC URL: " + config.getJdbcUrl());
+            System.out.println("🔧 AutoCommit: " + config.isAutoCommit());
 
-            DataSource ds = DataSourceBuilder.create()
-                    .url(jdbcUrl)
-                    .username(username)
-                    .password(password)
-                    .driverClassName("org.postgresql.Driver")
-                    .build();
+            HikariDataSource dataSource = new HikariDataSource(config);
+            System.out.println("✅ HikariDataSource створено успішно");
 
-            System.out.println("✅ DataSource створено успішно");
-            return ds;
+            return dataSource;
 
         } catch (Exception e) {
-            System.err.println("❌ Error parsing DATABASE_URL: " + e.getMessage());
+            System.err.println("❌ Error creating DataSource: " + e.getMessage());
             e.printStackTrace();
 
-            // Fallback тільки для локальної розробки
-            System.out.println("🔄 Використовується fallback конфігурація для локальної розробки");
-            return DataSourceBuilder.create()
-                    .url("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0")
-                    .username("postgres")
-                    .password("dimpsonteam2256")
-                    .driverClassName("org.postgresql.Driver")
-                    .build();
+            // Fallback для локальної розробки
+            System.out.println("🔄 Використовується fallback конфігурація");
+            HikariConfig fallbackConfig = new HikariConfig();
+            fallbackConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/cv?sslmode=disable");
+            fallbackConfig.setUsername("postgres");
+            fallbackConfig.setPassword("dimpsonteam2256");
+            fallbackConfig.setDriverClassName("org.postgresql.Driver");
+            fallbackConfig.setAutoCommit(false);
+            fallbackConfig.setMaximumPoolSize(2);
+
+            return new HikariDataSource(fallbackConfig);
         }
     }
 }
