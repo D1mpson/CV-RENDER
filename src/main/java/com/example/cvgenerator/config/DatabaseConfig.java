@@ -1,11 +1,11 @@
 package com.example.cvgenerator.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -48,7 +48,7 @@ public class DatabaseConfig {
             }
 
             // Формуємо JDBC URL з відповідним SSL режимом
-            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false",
+            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false&tcpKeepAlive=true",
                     host, port, database, sslMode);
 
             System.out.println("🔗 Host: " + host);
@@ -59,14 +59,34 @@ public class DatabaseConfig {
             System.out.println("🔗 SSL Mode: " + sslMode);
             System.out.println("🔗 JDBC URL: " + jdbcUrl);
 
-            DataSource ds = DataSourceBuilder.create()
-                    .url(jdbcUrl)
-                    .username(username)
-                    .password(password)
-                    .driverClassName("org.postgresql.Driver")
-                    .build();
+            // КРИТИЧНО: Налаштування HikariCP для Supabase Free tier
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(jdbcUrl);
+            config.setUsername(username);
+            config.setPassword(password);
+            config.setDriverClassName("org.postgresql.Driver");
 
-            System.out.println("✅ DataSource створено успішно");
+            // Мінімальні налаштування для Supabase Free tier (ліміт: ~15 підключень)
+            config.setMaximumPoolSize(1);  // КРИТИЧНО: тільки 1 підключення
+            config.setMinimumIdle(0);      // Без idle підключень
+            config.setConnectionTimeout(30000);  // 30 секунд
+            config.setIdleTimeout(300000);       // 5 хвилин
+            config.setMaxLifetime(600000);       // 10 хвилин
+            config.setLeakDetectionThreshold(60000); // 1 хвилина
+            config.setInitializationFailTimeout(1);
+
+            // Додаткові оптимізації
+            config.addDataSourceProperty("tcpKeepAlive", "true");
+            config.addDataSourceProperty("socketTimeout", "30");
+            config.addDataSourceProperty("loginTimeout", "10");
+            config.addDataSourceProperty("cancelSignalTimeout", "10");
+
+            HikariDataSource ds = new HikariDataSource(config);
+
+            System.out.println("✅ HikariDataSource створено з оптимізованими налаштуваннями");
+            System.out.println("📊 Max Pool Size: " + config.getMaximumPoolSize());
+            System.out.println("📊 Min Idle: " + config.getMinimumIdle());
+
             return ds;
 
         } catch (Exception e) {
@@ -74,12 +94,15 @@ public class DatabaseConfig {
             e.printStackTrace();
 
             // Fallback для локальної розробки БЕЗ SSL
-            return DataSourceBuilder.create()
-                    .url("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0")
-                    .username("postgres")
-                    .password("dimpsonteam2256")
-                    .driverClassName("org.postgresql.Driver")
-                    .build();
+            HikariConfig fallbackConfig = new HikariConfig();
+            fallbackConfig.setJdbcUrl("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0");
+            fallbackConfig.setUsername("postgres");
+            fallbackConfig.setPassword("dimpsonteam2256");
+            fallbackConfig.setDriverClassName("org.postgresql.Driver");
+            fallbackConfig.setMaximumPoolSize(2);
+            fallbackConfig.setMinimumIdle(1);
+
+            return new HikariDataSource(fallbackConfig);
         }
     }
 }
