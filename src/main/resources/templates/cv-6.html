@@ -21,7 +21,7 @@
             <!-- Фото секція -->
             <div class="photo-section">
                 <div class="photo-container" th:if="${cv.photoPath != null && !cv.photoPath.isEmpty()}">
-                    <img th:src="${cv.photoPath}" class="photo" alt="Фото">
+                    <img th:src="@{'/uploads/photos/' + ${cv.photoPath}}" class="photo" alt="Фото">
                 </div>
                 <div class="photo-placeholder" th:if="${cv.photoPath == null || cv.photoPath.isEmpty()}">
                     Photo

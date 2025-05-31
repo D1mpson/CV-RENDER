@@ -1,11 +1,11 @@
 package com.example.cvgenerator.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -48,7 +48,7 @@ public class DatabaseConfig {
             }
 
             // Формуємо JDBC URL з відповідним SSL режимом
-            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false&tcpKeepAlive=true",
+            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false",
                     host, port, database, sslMode);
 
             System.out.println("🔗 Host: " + host);
@@ -59,50 +59,27 @@ public class DatabaseConfig {
             System.out.println("🔗 SSL Mode: " + sslMode);
             System.out.println("🔗 JDBC URL: " + jdbcUrl);
 
-            // КРИТИЧНО: Налаштування HikariCP для Supabase Free tier
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(jdbcUrl);
-            config.setUsername(username);
-            config.setPassword(password);
-            config.setDriverClassName("org.postgresql.Driver");
+            DataSource ds = DataSourceBuilder.create()
+                    .url(jdbcUrl)
+                    .username(username)
+                    .password(password)
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
 
-            // Мінімальні налаштування для Supabase Free tier
-            config.setMaximumPoolSize(1);
-            config.setMinimumIdle(0);
-            config.setConnectionTimeout(30000);
-            config.setIdleTimeout(120000);     // 2 хвилини замість 5
-            config.setMaxLifetime(300000);     // 5 хвилин замість 10
-            config.setLeakDetectionThreshold(0); // Відключаємо для економії ресурсів
-            config.setInitializationFailTimeout(-1); // Не фейлити одразу
-
-            // Додаткові оптимізації для Supabase
-            config.addDataSourceProperty("tcpKeepAlive", "true");
-            config.addDataSourceProperty("socketTimeout", "20");
-            config.addDataSourceProperty("loginTimeout", "10");
-            config.addDataSourceProperty("cancelSignalTimeout", "10");
-            config.addDataSourceProperty("connectTimeout", "10");
-
-            // КРИТИЧНО: Додаємо retry механізм
-            config.setConnectionTestQuery("SELECT 1");
-            config.setValidationTimeout(5000);
-
-            HikariDataSource ds = new HikariDataSource(config);
-
-            System.out.println("✅ HikariDataSource створено з оптимізованими налаштуваннями");
-            System.out.println("📊 Max Pool Size: " + config.getMaximumPoolSize());
-            System.out.println("📊 Min Idle: " + config.getMinimumIdle());
-
+            System.out.println("✅ DataSource створено успішно");
             return ds;
 
         } catch (Exception e) {
-            System.err.println("❌ Critical Error with DATABASE_URL: " + e.getMessage());
+            System.err.println("❌ Error parsing DATABASE_URL: " + e.getMessage());
             e.printStackTrace();
 
-            // ВИДАЛЕНО FALLBACK - якщо Supabase не працює, краще зупинити додаток
-            // ніж намагатися підключитися до неіснуючого localhost
-
-            throw new RuntimeException("Не вдалося підключитися до бази даних. " +
-                    "Перевірте DATABASE_URL та доступність Supabase. Error: " + e.getMessage(), e);
+            // Fallback для локальної розробки БЕЗ SSL
+            return DataSourceBuilder.create()
+                    .url("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0")
+                    .username("postgres")
+                    .password("dimpsonteam2256")
+                    .driverClassName("org.postgresql.Driver")
+                    .build();
         }
     }
 }
