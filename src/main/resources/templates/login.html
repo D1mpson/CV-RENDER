@@ -20,14 +20,34 @@
         </div>
         <div class="login-form">
             <form th:action="@{/login}" method="post">
+                <!-- Повідомлення про помилки -->
                 <div th:if="${param.error}" class="alert alert-danger" th:text="#{login.error}">
                     Невірний email або пароль.
                 </div>
+
+                <!-- Повідомлення про вихід з системи -->
                 <div th:if="${param.logout}" class="alert alert-success" th:text="#{login.logout}">
                     Ви успішно вийшли з системи.
                 </div>
-                <div th:if="${param.success}" class="alert alert-success" th:text="#{login.success}">
-                    Реєстрація пройшла успішно. Тепер ви можете увійти.
+
+                <!-- Повідомлення про успішну реєстрацію -->
+                <div th:if="${param.registered}" class="alert alert-info">
+                    Реєстрація успішна! Перевірте свою електронну пошту для підтвердження.
+                </div>
+
+                <!-- Повідомлення про успішну верифікацію -->
+                <div th:if="${param.verified}" class="alert alert-success">
+                    Email успішно підтверджено! Тепер ви можете увійти в систему.
+                </div>
+
+                <!-- Повідомлення про невдалу верифікацію -->
+                <div th:if="${param['verification-failed']}" class="alert alert-danger">
+                    Посилання для підтвердження недійсне або прострочене.
+                </div>
+
+                <!-- Повідомлення про успішну зміну профілю (якщо потрібно) -->
+                <div th:if="${param.success}" class="alert alert-success">
+                    Дані успішно оновлено!
                 </div>
 
                 <div class="form-group">

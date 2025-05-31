@@ -5,6 +5,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 import java.net.URI;
@@ -38,15 +39,24 @@ public class DatabaseConfig {
             String username = userInfo[0];
             String password = userInfo.length > 1 ? userInfo[1] : "";
 
-            // Додаємо SSL та відключаємо prepared statements для Supabase pooler
-            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=require&prepareThreshold=0&cachePrepStmts=false",
-                    host, port, database);
+            // Визначаємо SSL режим в залежності від середовища
+            String sslMode = "disable"; // За замовчуванням для локальної розробки
+
+            // Якщо це продакшн (Supabase або інший хмарний провайдер)
+            if (!host.equals("localhost") && !host.equals("127.0.0.1")) {
+                sslMode = "require";
+            }
+
+            // Формуємо JDBC URL з відповідним SSL режимом
+            String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false",
+                    host, port, database, sslMode);
 
             System.out.println("🔗 Host: " + host);
             System.out.println("🔗 Port: " + port);
             System.out.println("🔗 Database: " + database);
             System.out.println("👤 Username: " + username);
             System.out.println("🔒 Password length: " + password.length());
+            System.out.println("🔗 SSL Mode: " + sslMode);
             System.out.println("🔗 JDBC URL: " + jdbcUrl);
 
             DataSource ds = DataSourceBuilder.create()
@@ -56,15 +66,16 @@ public class DatabaseConfig {
                     .driverClassName("org.postgresql.Driver")
                     .build();
 
-            System.out.println("✅ DataSource створено успішно з відключеними prepared statements");
+            System.out.println("✅ DataSource створено успішно");
             return ds;
 
         } catch (Exception e) {
             System.err.println("❌ Error parsing DATABASE_URL: " + e.getMessage());
             e.printStackTrace();
-            // Fallback для локальної розробки
+
+            // Fallback для локальної розробки БЕЗ SSL
             return DataSourceBuilder.create()
-                    .url("jdbc:postgresql://localhost:5432/cv?prepareThreshold=0")
+                    .url("jdbc:postgresql://localhost:5432/cv?sslmode=disable&prepareThreshold=0")
                     .username("postgres")
                     .password("dimpsonteam2256")
                     .driverClassName("org.postgresql.Driver")

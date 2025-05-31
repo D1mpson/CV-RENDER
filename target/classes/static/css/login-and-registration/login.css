@@ -11,6 +11,20 @@
     box-sizing: border-box;
 }
 
+/* Додайте ці стилі до існуючого login.css */
+
+/* Alert для інформаційних повідомлень */
+.alert-info {
+    background-color: #E3F2FD;
+    color: #1976D2;
+    border: 1px solid #BBDEFB;
+    padding: 10px;
+    margin-bottom: var(--section-gap);
+    border-radius: var(--border-radius);
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .login-container {
     width: 100%;
     max-width: 600px;

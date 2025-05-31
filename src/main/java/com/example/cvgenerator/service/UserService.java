@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,21 +93,46 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public boolean verifyEmail(String token) {
+        System.out.println("🔍 Attempting to verify email with token: " + token);
+
         Optional<User> userOpt = userRepository.findByVerificationToken(token);
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+            System.out.println("✅ User found: " + user.getEmail());
+            System.out.println("📅 Token expires at: " + user.getVerificationTokenExpires());
+            System.out.println("📅 Current time: " + LocalDateTime.now());
 
             // Перевіряємо чи не протерміновано токен
-            if (user.getVerificationTokenExpires().isAfter(LocalDateTime.now())) {
-                user.setEmailVerified(true);
-                user.setVerificationToken(null);
-                user.setVerificationTokenExpires(null);
-                userRepository.save(user);
+            if (user.getVerificationTokenExpires() != null &&
+                    user.getVerificationTokenExpires().isAfter(LocalDateTime.now())) {
+
+                // ВАЖЛИВО: Отримуємо користувача знову, щоб він був в managed стані
+                User managedUser = userRepository.findById(user.getId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+                // Оновлюємо поля
+                managedUser.setEmailVerified(true);
+                managedUser.setVerificationToken(null);
+                managedUser.setVerificationTokenExpires(null);
+
+                // Явно викликаємо flush для збереження змін
+                User savedUser = userRepository.saveAndFlush(managedUser);
+
+                System.out.println("✅ Email verified successfully for: " + savedUser.getEmail());
+                System.out.println("✅ Email verified status after save: " + savedUser.isEmailVerified());
+                System.out.println("✅ Verification token after save: " + savedUser.getVerificationToken());
+
                 return true;
+            } else {
+                System.out.println("❌ Token expired!");
             }
+        } else {
+            System.out.println("❌ No user found with token: " + token);
         }
+
         return false;
     }
 
