@@ -24,8 +24,7 @@ public class CVController {
     private final CVHelper cvHelper;
 
     @Autowired
-    public CVController(CVService cvService,
-                        UserService userService, CVHelper cvHelper) {
+    public CVController(CVService cvService, UserService userService, CVHelper cvHelper) {
         this.cvService = cvService;
         this.userService = userService;
         this.cvHelper = cvHelper;
@@ -49,7 +48,7 @@ public class CVController {
             @Valid @ModelAttribute("cv") CV cv,
             BindingResult result,
             @RequestParam("templateId") Long templateId,
-            @RequestParam("photo") MultipartFile photo,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam(value = "portfolioLinks", required = false) List<String> portfolioLinks,
             @RequestParam(value = "knownLanguages", required = false) List<String> knownLanguages,
             @RequestParam(value = "educationItems", required = false) List<String> educationItems,
@@ -61,8 +60,23 @@ public class CVController {
             RedirectAttributes redirectAttrs,
             Model model) {
 
+        System.out.println("🔍 Creating CV - received data:");
+        System.out.println("   CV name: " + cv.getName());
+        System.out.println("   Template ID: " + templateId);
+        System.out.println("   Photo file: " + (photo != null ? photo.getOriginalFilename() : "none"));
+        System.out.println("   Photo size: " + (photo != null ? photo.getSize() : 0) + " bytes");
+
+        // Перевірка обов'язкових полів
+        if (templateId == null) {
+            result.rejectValue("template", "error.cv", "Будь ласка, оберіть шаблон");
+        }
+
         if (result.hasErrors()) {
+            System.out.println("❌ Validation errors found:");
+            result.getAllErrors().forEach(error ->
+                    System.out.println("   - " + error.getDefaultMessage()));
             cvHelper.prepareFormAttributes(model);
+            model.addAttribute("selectedTemplateId", templateId);
             return "generator";
         }
 
@@ -70,28 +84,39 @@ public class CVController {
             Template template = cvHelper.getAndPrepareTemplate(templateId);
             cv.setTemplate(template);
 
+            // Обробка текстових полів
             cvHelper.processAllTextFields(cv, educationItems, coursesItems,
                     workExperienceItems, softSkillsItems, hardSkillsItems);
 
-            // Додаємо обробку хобі
+            // Обробка хобі
             cvHelper.processListToStringField(hobbiesItems, cv::setHobbies);
 
+            // Обробка портфоліо
             cvHelper.processListItems(portfolioLinks, cv::setPortfolioLinks);
 
-            if (knownLanguages != null) {
+            // Обробка мов
+            if (knownLanguages != null && !knownLanguages.isEmpty()) {
                 cv.setKnownLanguages(knownLanguages);
             }
 
             CV savedCV = cvService.createCV(cv, photo);
+
+            System.out.println("✅ CV created successfully with ID: " + savedCV.getId());
+            System.out.println("✅ Photo path: " + savedCV.getPhotoPath());
+
             redirectAttrs.addFlashAttribute("success", "CV успішно створено!");
             return "redirect:/cv/" + savedCV.getId();
+
         } catch (Exception e) {
-            result.rejectValue("name", "error.cv", e.getMessage());
+            System.err.println("❌ Error creating CV: " + e.getMessage());
+            e.printStackTrace();
+
+            model.addAttribute("error", "Помилка при створенні CV: " + e.getMessage());
             cvHelper.prepareFormAttributes(model);
+            model.addAttribute("selectedTemplateId", templateId);
             return "generator";
         }
     }
-
 
     @GetMapping("/cv/{id}")
     public String viewCV(@PathVariable Long id, Model model) {
@@ -103,7 +128,6 @@ public class CVController {
         }
 
         model.addAttribute("cv", cv);
-
         return cvHelper.determineTemplateView(cv.getTemplate());
     }
 
@@ -132,7 +156,7 @@ public class CVController {
             @Valid @ModelAttribute("cv") CV cv,
             BindingResult result,
             @RequestParam("templateId") Long templateId,
-            @RequestParam("photo") MultipartFile photo,
+            @RequestParam(value = "photo", required = false) MultipartFile photo,
             @RequestParam(value = "portfolioLinks", required = false) List<String> portfolioLinks,
             @RequestParam(value = "knownLanguages", required = false) List<String> knownLanguages,
             @RequestParam(value = "educationItems", required = false) List<String> educationItems,
@@ -144,14 +168,22 @@ public class CVController {
             RedirectAttributes redirectAttrs,
             Model model) {
 
+        System.out.println("🔄 Updating CV with ID: " + id);
+
         if (result.hasErrors()) {
             cvHelper.prepareFormAttributes(model);
+            model.addAttribute("selectedTemplateId", templateId);
             return "generator";
         }
 
         try {
             CV existingCV = cvService.getCVById(id)
                     .orElseThrow(() -> new RuntimeException("CV не знайдено"));
+
+            // Перевірка прав доступу
+            if (!existingCV.getUser().getId().equals(userService.getCurrentUser().getId())) {
+                throw new RuntimeException("У вас немає прав для редагування цього CV");
+            }
 
             cv.setId(id);
             cv.setUser(existingCV.getUser());
@@ -162,7 +194,6 @@ public class CVController {
             cvHelper.processAllTextFieldsWithFallback(cv, existingCV, educationItems, coursesItems,
                     workExperienceItems, softSkillsItems, hardSkillsItems);
 
-            // Додаємо обробку хобі
             cvHelper.processListToStringFieldWithFallback(hobbiesItems, cv::setHobbies, existingCV.getHobbies());
 
             if (portfolioLinks != null) {
@@ -181,10 +212,14 @@ public class CVController {
 
             redirectAttrs.addFlashAttribute("success", "CV успішно оновлено!");
             return "redirect:/cv/" + id;
+
         } catch (Exception e) {
-            System.out.println("Помилка при оновленні CV: " + e.getMessage());
+            System.err.println("❌ Error updating CV: " + e.getMessage());
             e.printStackTrace();
+
+            model.addAttribute("error", "Помилка при оновленні CV: " + e.getMessage());
             cvHelper.prepareFormAttributes(model);
+            model.addAttribute("selectedTemplateId", templateId);
             return "generator";
         }
     }

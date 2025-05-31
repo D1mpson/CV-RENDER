@@ -72,16 +72,51 @@
                 </div>
 
                 <!-- Секція для фото -->
-                <div class="form-group">
+                <div class="form-group photo-section">
                     <label>Ваше фото</label>
-                    <div class="file-upload" style="margin-top: 10px; margin-bottom: 10px;">
-                        <label for="photo" class="file-upload-label" style="padding: 10px 225px; background-color: #f0f0f0; border-radius: 4px; cursor: pointer; display: inline-block;">Виберіть файл</label>
-                        <input type="file" id="photo" name="photo" accept="image/*" style="display: none;">
-                    </div>
-                    <p class="form-hint">Рекомендований розмір фото: 3:4, формат: JPG, PNG, максимальний розмір: 10МБ</p>
-                    <p class="form-hint">Якщо ви обрали файл, він обовʼязково завантажиться.</p>
 
+                    <!-- Показуємо поточне фото при редагуванні -->
+                    <div th:if="${cv.id != null && cv.photoPath != null && !cv.photoPath.isEmpty()}"
+                         class="current-photo-container" data-cv-editing="true">
+                        <p class="current-photo-label">Поточне фото:</p>
+                        <div class="current-photo-display">
+                            <img th:src="${cv.photoPath}" alt="Поточне фото" class="current-photo-image">
+                            <div class="current-photo-info">
+                                <p class="current-photo-description">
+                                    Залиште поле порожнім, щоб зберегти поточне фото, або оберіть нове для заміни.
+                                </p>
+                            </div>
+                        </div>
+                        <hr class="photo-separator">
+                    </div>
+
+                    <!-- Завантаження нового фото -->
+                    <div class="file-upload">
+                        <label for="photo" class="file-upload-label" id="file-label">
+                            <span th:if="${cv.id != null}">Обрати нове фото</span>
+                            <span th:unless="${cv.id != null}">Виберіть файл</span>
+                        </label>
+                        <input type="file" id="photo" name="photo" accept="image/*">
+                    </div>
+
+                    <!-- Інформація про обраний файл -->
+                    <div id="file-info">
+                        <div class="file-info-content">
+                            <div class="file-details">
+                                <div><strong>Обрано файл:</strong> <span id="file-name"></span></div>
+                                <div id="file-size"></div>
+                            </div>
+                            <button type="button" id="clear-file">Очистити</button>
+                        </div>
+                    </div>
+
+                    <p class="form-hint">Рекомендований розмір фото: 3:4, формат: JPG, PNG, максимальний розмір: 10МБ</p>
+                    <p class="form-hint">Підтримується перетягування файлів (drag & drop)</p>
                 </div>
+
+                <!-- Підключення стилів та JavaScript для обробки фото -->
+                <link rel="stylesheet" th:href="@{/css/photo-upload.css}">
+                <script th:src="@{/js/upload-photo.js}"></script>
             </div>
 
             <div class="form-column">
