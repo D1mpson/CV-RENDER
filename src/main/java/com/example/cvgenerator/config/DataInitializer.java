@@ -59,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
             template1.setName("Professional");
             template1.setDescription("Класичний професійний шаблон, підходить для більшості галузей");
             template1.setHtmlPath("cv-1");
-            template1.setPreviewImagePath("/images/generator/Professional.png");
+            template1.setPreviewImagePath("/images/generator/Professional.webp");
             templateService.saveTemplate(template1);
             System.out.println("DataInitializer: ✅ Створено шаблон Professional");
 
@@ -67,7 +67,7 @@ public class DataInitializer implements CommandLineRunner {
             template2.setName("Creative");
             template2.setDescription("Сучасний креативний шаблон для дизайнерів та креативних професій");
             template2.setHtmlPath("cv-2");
-            template2.setPreviewImagePath("/images/generator/Creative.png");
+            template2.setPreviewImagePath("/images/generator/Creative.webp");
             templateService.saveTemplate(template2);
             System.out.println("DataInitializer: ✅ Створено шаблон Creative");
 
@@ -75,7 +75,7 @@ public class DataInitializer implements CommandLineRunner {
             template3.setName("Academic");
             template3.setDescription("Формальний шаблон для академічних та наукових позицій");
             template3.setHtmlPath("cv-3");
-            template3.setPreviewImagePath("/images/generator/Academic.png");
+            template3.setPreviewImagePath("/images/generator/Academic.webp");
             templateService.saveTemplate(template3);
             System.out.println("DataInitializer: ✅ Створено шаблон Academic");
 
@@ -93,11 +93,11 @@ public class DataInitializer implements CommandLineRunner {
                 admin.setEmail("admin@system.com");
                 admin.setPassword("admin123");
                 admin.setPhoneNumber("+380000000000");
+                admin.setEmailVerified(true);
                 admin.setBirthDate(LocalDate.now().minusYears(18));
                 admin.setCityLife("City");
                 admin.setRole("ROLE_ADMIN");
                 // Адмін автоматично верифікований
-                admin.setEmailVerified(true);
 
                 userService.saveUser(admin);
                 System.out.println("DataInitializer: ✅ Створено адміністратора (email: admin@system.com, пароль: admin123)");
