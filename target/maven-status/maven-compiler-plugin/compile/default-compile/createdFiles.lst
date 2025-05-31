@@ -22,6 +22,7 @@ com/example/cvgenerator/config/SecurityConfig.class
 com/example/cvgenerator/model/User.class
 com/example/cvgenerator/repository/TemplateRepository.class
 com/example/cvgenerator/controller/util/UserHelper.class
+com/example/cvgenerator/config/TransactionConfig.class
 com/example/cvgenerator/controller/UserController.class
 com/example/cvgenerator/controller/util/CVHelper$Consumer.class
 com/example/cvgenerator/model/CV.class

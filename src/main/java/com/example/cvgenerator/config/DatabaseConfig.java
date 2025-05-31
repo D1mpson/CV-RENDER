@@ -60,7 +60,7 @@ public class DatabaseConfig {
 
             // Формуємо JDBC URL з правильними параметрами для Neon
             String jdbcUrl = String.format(
-                    "jdbc:postgresql://%s:%d/%s?sslmode=%s&prepareThreshold=0&cachePrepStmts=false&useSSL=true&requireSSL=true&verifyServerCertificate=false",
+                    "jdbc:postgresql://%s:%d/%s?sslmode=%s",
                     host, port, database, sslMode
             );
 
